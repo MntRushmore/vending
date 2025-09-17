@@ -39,7 +39,7 @@
       ]
     },
     {
-      "source": "/.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)",
+      "source": "/:all*(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -47,10 +47,5 @@
         }
       ]
     }
-  ],
-  "functions": {
-    "api/health.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }
