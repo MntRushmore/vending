@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vending Stream 🎉</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Vending Machine Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
@@ -15,14 +13,14 @@
         }
         
         body {
-            font-family: 'Press Start 2P', cursive;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
         }
         
-        /* Animated Background Grid */
+        /* Subtle grid background for monitors */
         body::before {
             content: '';
             position: fixed;
@@ -31,233 +29,331 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
+                radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.15) 1px, transparent 0);
+            background-size: 40px 40px;
             z-index: -1;
         }
         
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-        
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
-            position: relative;
+            padding: 24px;
         }
         
         /* Header */
         .header {
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding: 20px 0;
+            border-bottom: 1px solid #334155;
         }
         
         .logo {
-            font-size: clamp(24px, 5vw, 48px);
-            color: #ff00ff;
-            text-shadow: 
-                0 0 10px #ff00ff,
-                0 0 20px #ff00ff,
-                0 0 30px #ff00ff,
-                0 0 40px #ff00ff;
-            animation: neonPulse 2s ease-in-out infinite alternate;
-            margin-bottom: 10px;
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 700;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
-        @keyframes neonPulse {
-            from {
-                text-shadow: 
-                    0 0 10px #ff00ff,
-                    0 0 20px #ff00ff,
-                    0 0 30px #ff00ff,
-                    0 0 40px #ff00ff;
-            }
-            to {
-                text-shadow: 
-                    0 0 5px #ff00ff,
-                    0 0 10px #ff00ff,
-                    0 0 15px #ff00ff,
-                    0 0 20px #ff00ff,
-                    0 0 35px #00ffff,
-                    0 0 40px #00ffff;
-            }
+        .logo::before {
+            content: "📊";
+            font-size: 1.2em;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #10b981;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            margin-top: 4px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
         
         /* Status Indicator */
         .status {
-            text-align: center;
-            font-size: clamp(10px, 2vw, 14px);
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
             transition: all 0.3s ease;
+            margin-bottom: 24px;
         }
         
         .status.connected {
-            color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
-            text-shadow: 0 0 10px #00ff00;
-            border: 1px solid #00ff00;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status.connected::before {
+            content: "●";
+            font-size: 12px;
+            animation: pulse-green 2s infinite;
         }
         
         .status.disconnected {
-            color: #ff0000;
-            background: rgba(255, 0, 0, 0.1);
-            text-shadow: 0 0 10px #ff0000;
-            border: 1px solid #ff0000;
-            animation: pulse 1s infinite;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .status.disconnected::before {
+            content: "●";
+            font-size: 12px;
+            animation: pulse-red 1s infinite;
         }
         
         .status.connecting {
-            color: #ffff00;
-            background: rgba(255, 255, 0, 0.1);
-            text-shadow: 0 0 10px #ffff00;
-            border: 1px solid #ffff00;
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
         }
         
-        @keyframes pulse {
+        .status.connecting::before {
+            content: "●";
+            font-size: 12px;
+            animation: pulse-yellow 1.5s infinite;
+        }
+        
+        @keyframes pulse-green {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
         
-        /* Main Celebration Banner */
-        .celebration-banner {
-            background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
-            background-size: 400% 400%;
-            animation: gradientShift 3s ease infinite;
-            padding: 30px;
-            margin: 30px 0;
-            border-radius: 15px;
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes pulse-yellow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Latest Transaction Banner */
+        .transaction-banner {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 24px 0;
             text-align: center;
             position: relative;
             overflow: hidden;
-            box-shadow: 
-                0 0 20px rgba(255, 0, 255, 0.5),
-                inset 0 0 20px rgba(255, 255, 255, 0.1);
-            min-height: 100px;
+            min-height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.5s ease;
         }
         
-        .celebration-banner.no-sales {
-            background: linear-gradient(45deg, #333, #555, #333);
-            animation: none;
+        .transaction-banner.has-sale {
+            background: linear-gradient(135deg, #065f46, #047857);
+            border-color: #10b981;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
         }
         
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .transaction-banner.no-sales {
+            background: linear-gradient(135deg, #374151, #4b5563);
+            border-color: #6b7280;
         }
         
-        .celebration-text {
-            font-size: clamp(16px, 3vw, 24px);
-            color: #000;
-            font-weight: bold;
-            text-shadow: 2px 2px 0px #fff;
-            animation: bounce 1s ease-in-out infinite;
+        .transaction-text {
+            font-size: clamp(20px, 3vw, 32px);
+            font-weight: 600;
+            color: #f1f5f9;
+            transition: all 0.3s ease;
         }
         
-        .celebration-text.no-sales {
-            color: #ccc;
-            text-shadow: 2px 2px 0px #000;
-            animation: none;
+        .transaction-text.no-sales {
+            color: #9ca3af;
+            font-size: clamp(18px, 2.5vw, 28px);
         }
         
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
+        .transaction-details {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #94a3b8;
         }
         
-        /* Confetti Animation */
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #ff00ff;
-            animation: confettiFall 3s linear infinite;
-            display: none;
+        .transaction-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
-        .celebration-banner.has-sale .confetti {
-            display: block;
-        }
-        
-        .confetti:nth-child(1) { left: 10%; animation-delay: 0s; background: #ff00ff; }
-        .confetti:nth-child(2) { left: 20%; animation-delay: 0.5s; background: #00ffff; }
-        .confetti:nth-child(3) { left: 30%; animation-delay: 1s; background: #ffff00; }
-        .confetti:nth-child(4) { left: 40%; animation-delay: 1.5s; background: #ff0080; }
-        .confetti:nth-child(5) { left: 50%; animation-delay: 2s; background: #00ff80; }
-        .confetti:nth-child(6) { left: 60%; animation-delay: 0.3s; background: #8000ff; }
-        .confetti:nth-child(7) { left: 70%; animation-delay: 0.8s; background: #ff8000; }
-        .confetti:nth-child(8) { left: 80%; animation-delay: 1.3s; background: #0080ff; }
-        .confetti:nth-child(9) { left: 90%; animation-delay: 1.8s; background: #80ff00; }
-        
-        @keyframes confettiFall {
+        /* Success pulse animation */
+        @keyframes success-pulse {
             0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(16, 185, 129, 0);
             }
             100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
             }
         }
         
-        /* Live Feed Section */
+        .transaction-banner.pulse {
+            animation: success-pulse 1s ease-out;
+        }
+        
+        /* Recent Transactions Grid */
+        .transactions-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
         .live-feed {
-            background: rgba(0, 20, 40, 0.8);
-            border: 2px solid #00ffff;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            box-shadow: 
-                0 0 20px rgba(0, 255, 255, 0.3),
-                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
         .feed-header {
-            color: #00ffff;
-            font-size: clamp(14px, 2.5vw, 20px);
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px #00ffff;
-            text-align: center;
+            color: #f1f5f9;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .feed-header::before {
+            content: "🔄";
+            font-size: 18px;
+        }
+        
+        .feed-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        
+        .feed-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .feed-list::-webkit-scrollbar-track {
+            background: #334155;
+            border-radius: 3px;
+        }
+        
+        .feed-list::-webkit-scrollbar-thumb {
+            background: #64748b;
+            border-radius: 3px;
         }
         
         .feed-item {
-            background: rgba(0, 255, 255, 0.1);
-            border-left: 4px solid #00ffff;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: clamp(10px, 2vw, 14px);
-            color: #ffffff;
-            animation: slideInRight 0.5s ease-out;
+            background: #334155;
+            border-left: 4px solid #64748b;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #e2e8f0;
+            animation: slideInRight 0.4s ease-out;
             transition: all 0.3s ease;
             list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .feed-item:hover {
-            background: rgba(0, 255, 255, 0.2);
-            transform: translateX(10px);
+            background: #475569;
+            transform: translateX(4px);
         }
         
         .feed-item.no-sales {
-            color: #666;
-            border-left-color: #666;
-            background: rgba(100, 100, 100, 0.1);
+            color: #94a3b8;
+            border-left-color: #64748b;
+            background: #374151;
+            justify-content: center;
+        }
+        
+        .feed-item.new-sale {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            animation: slideInRight 0.4s ease-out, newSaleFlash 3s ease-out 0.4s;
+        }
+        
+        .item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        .item-emoji {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            color: #f1f5f9;
+        }
+        
+        .item-time {
+            font-size: 12px;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 2px;
+        }
+        
+        .item-price {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: #10b981;
+            font-size: 16px;
         }
         
         @keyframes slideInRight {
             from {
-                transform: translateX(100px);
+                transform: translateX(30px);
                 opacity: 0;
             }
             to {
@@ -267,49 +363,135 @@
         }
         
         @keyframes newSaleFlash {
-            0% { background: rgba(255, 255, 0, 0.8); }
-            100% { background: rgba(0, 255, 255, 0.1); }
+            0% { 
+                background: rgba(16, 185, 129, 0.3);
+                border-left-color: #34d399;
+            }
+            100% { 
+                background: rgba(16, 185, 129, 0.1);
+                border-left-color: #10b981;
+            }
         }
         
-        .feed-item.new-sale {
-            animation: slideInRight 0.5s ease-out, newSaleFlash 2s ease-out 0.5s;
+        /* Statistics Panel */
+        .stats-panel {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
-        /* Glowing Effects */
-        .glow-blue {
-            box-shadow: 0 0 20px #00ffff;
+        .stats-header {
+            color: #f1f5f9;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .glow-pink {
-            box-shadow: 0 0 20px #ff00ff;
+        .stats-header::before {
+            content: "📈";
+            font-size: 18px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .stat-card {
+            background: #334155;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #10b981;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .stat-card-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Connection Health */
+        .connection-health {
+            margin-top: 16px;
+            padding: 12px;
+            background: #374151;
+            border-radius: 8px;
+        }
+        
+        .health-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .health-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .health-label {
+            color: #94a3b8;
+        }
+        
+        .health-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: #e2e8f0;
         }
         
         /* Responsive Design */
+        @media (max-width: 1024px) {
+            .transactions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            .header-stats {
+                justify-content: center;
+            }
+        }
+        
         @media (max-width: 768px) {
             .container {
-                padding: 10px;
+                padding: 16px;
             }
             
-            .celebration-banner {
-                padding: 20px;
-                margin: 20px 0;
+            .header-stats {
+                flex-direction: column;
+                gap: 12px;
             }
             
-            .live-feed {
-                padding: 15px;
+            .transaction-banner {
+                padding: 24px 16px;
             }
-        }
-        
-        /* Additional Neon Elements */
-        .neon-border {
-            border: 2px solid;
-            border-image: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff) 1;
-            animation: borderGlow 2s linear infinite;
-        }
-        
-        @keyframes borderGlow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.5); }
+            
+            .transactions-grid {
+                gap: 16px;
+            }
+            
+            .live-feed, .stats-panel {
+                padding: 16px;
+            }
         }
     </style>
 </head>
@@ -317,194 +499,441 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1 class="logo">VENDING STREAM 🎉</h1>
+            <h1 class="logo">Vending Machine Monitor</h1>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div id="total-sales" class="stat-value">0</div>
+                    <div class="stat-label">Total Sales</div>
+                </div>
+                <div class="stat-item">
+                    <div id="session-sales" class="stat-value">0</div>
+                    <div class="stat-label">Session Sales</div>
+                </div>
+                <div class="stat-item">
+                    <div id="uptime" class="stat-value">00:00</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
         </header>
         
         <!-- Connection Status -->
         <div id="status" class="status connecting">Connecting to WebSocket...</div>
         
-        <!-- Main Celebration Banner -->
-        <div id="celebration-banner" class="celebration-banner no-sales neon-border">
-            <div id="celebration-text" class="celebration-text no-sales">
-                🤖 Waiting for snack purchases...
+        <!-- Latest Transaction Banner -->
+        <div id="transaction-banner" class="transaction-banner no-sales">
+            <div>
+                <div id="transaction-text" class="transaction-text no-sales">
+                    Waiting for transactions...
+                </div>
+                <div id="transaction-details" class="transaction-details" style="display: none;">
+                    <div class="transaction-detail">
+                        <span>⏰</span>
+                        <span id="last-sale-time">--</span>
+                    </div>
+                    <div class="transaction-detail">
+                        <span>💰</span>
+                        <span id="last-sale-price">--</span>
+                    </div>
+                </div>
             </div>
-            <!-- Confetti Elements -->
-            <div class="confetti"></div>
-            <div class="confetti"></div>
-            <div class="confetti"></div>
-            <div class="confetti"></div>
-            <div class="confetti"></div>
-            <div class="confetti"></div>
-            <div class="confetti"></div>
-            <div class="confetti"></div>
-            <div class="confetti"></div>
         </div>
         
-        <!-- Live Feed Section -->
-        <div class="live-feed glow-blue">
-            <h2 class="feed-header">LIVE FEED</h2>
-            <ul id="sales">
-                <li id="no-sales" class="feed-item no-sales">No sales yet...</li>
-            </ul>
+        <!-- Transactions Grid -->
+        <div class="transactions-grid">
+            <!-- Live Feed Section -->
+            <div class="live-feed">
+                <h2 class="feed-header">Recent Transactions</h2>
+                <ul id="sales" class="feed-list">
+                    <li id="no-sales" class="feed-item no-sales">No transactions yet...</li>
+                </ul>
+            </div>
+            
+            <!-- Statistics Panel -->
+            <div class="stats-panel">
+                <h2 class="stats-header">Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div id="revenue-today" class="stat-card-value">$0.00</div>
+                        <div class="stat-card-label">Revenue Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="avg-transaction" class="stat-card-value">$0.00</div>
+                        <div class="stat-card-label">Avg Transaction</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="last-activity" class="stat-card-value">Never</div>
+                        <div class="stat-card-label">Last Activity</div>
+                    </div>
+                </div>
+                
+                <div class="connection-health">
+                    <div class="health-item">
+                        <span class="health-label">Connection:</span>
+                        <span id="connection-status" class="health-value">Connecting...</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-label">Reconnects:</span>
+                        <span id="reconnect-count" class="health-value">0</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-label">Last Message:</span>
+                        <span id="last-message-time" class="health-value">Never</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
     <script>
-        // Replace with your actual WebSocket URL
-        const wsUrl = 'wss://pb69dl7oeb.execute-api.us-west-1.amazonaws.com/production';
-        const statusEl = document.getElementById('status');
-        const salesEl = document.getElementById('sales');
-        const celebrationBanner = document.getElementById('celebration-banner');
-        const celebrationText = document.getElementById('celebration-text');
-        let ws;
-        let lastSale = null;
-
-        // Product emoji mapping
-        const productEmojis = {
-            'energy drink': '🥤',
-            'soda': '🥤',
-            'cola': '🥤',
-            'pepsi': '🥤',
-            'coke': '🥤',
-            'chocolate': '🍫',
-            'candy': '🍬',
-            'chips': '🍿',
-            'popcorn': '🍿',
-            'pretzels': '🥨',
-            'cookies': '🍪',
-            'nuts': '🥜',
-            'crackers': '🍘',
-            'gum': '🍬',
-            'water': '💧',
-            'juice': '🧃',
-            'coffee': '☕',
-            'tea': '🍵',
-            'sandwich': '🥪',
-            'salad': '🥗',
-            'fruit': '🍎',
-            'yogurt': '🥛',
-            'protein': '💪',
-            'granola': '🌾'
-        };
-
-        function getProductEmoji(productName) {
-            const product = productName.toLowerCase();
-            for (const [key, emoji] of Object.entries(productEmojis)) {
-                if (product.includes(key)) {
-                    return emoji;
+        class VendingMachineMonitor {
+            constructor() {
+                // Configuration
+                this.wsUrl = 'wss://pb69dl7oeb.execute-api.us-west-1.amazonaws.com/production';
+                this.maxFeedItems = 15;
+                this.bannerDisplayTime = 8000; // 8 seconds
+                this.reconnectDelay = 3000;
+                
+                // State
+                this.ws = null;
+                this.startTime = Date.now();
+                this.totalSales = 0;
+                this.sessionSales = 0;
+                this.reconnectCount = 0;
+                this.lastSaleTime = null;
+                this.salesData = [];
+                this.lastMessageTime = null;
+                
+                // DOM Elements
+                this.elements = {
+                    status: document.getElementById('status'),
+                    connectionStatus: document.getElementById('connection-status'),
+                    reconnectCount: document.getElementById('reconnect-count'),
+                    lastMessageTime: document.getElementById('last-message-time'),
+                    salesList: document.getElementById('sales'),
+                    transactionBanner: document.getElementById('transaction-banner'),
+                    transactionText: document.getElementById('transaction-text'),
+                    transactionDetails: document.getElementById('transaction-details'),
+                    lastSaleTime: document.getElementById('last-sale-time'),
+                    lastSalePrice: document.getElementById('last-sale-price'),
+                    totalSales: document.getElementById('total-sales'),
+                    sessionSales: document.getElementById('session-sales'),
+                    uptime: document.getElementById('uptime'),
+                    revenueToday: document.getElementById('revenue-today'),
+                    avgTransaction: document.getElementById('avg-transaction'),
+                    lastActivity: document.getElementById('last-activity'),
+                    noSales: document.getElementById('no-sales')
+                };
+                
+                // Product emoji mapping
+                this.productEmojis = {
+                    'energy drink': '🥤', 'energy': '🥤', 'monster': '🥤', 'red bull': '🥤',
+                    'soda': '🥤', 'cola': '🥤', 'pepsi': '🥤', 'coke': '🥤', 'sprite': '🥤',
+                    'chocolate': '🍫', 'snickers': '🍫', 'kit kat': '🍫', 'twix': '🍫',
+                    'candy': '🍬', 'gum': '🍬', 'mints': '🍬', 'skittles': '🍬',
+                    'chips': '🍿', 'popcorn': '🍿', 'doritos': '🍿', 'lays': '🍿',
+                    'pretzels': '🥨', 'crackers': '🥨',
+                    'cookies': '🍪', 'oreo': '🍪',
+                    'nuts': '🥜', 'peanuts': '🥜', 'almonds': '🥜',
+                    'water': '💧', 'aqua': '💧', 'dasani': '💧',
+                    'juice': '🧃', 'orange': '🧃', 'apple': '🧃',
+                    'coffee': '☕', 'espresso': '☕', 'latte': '☕',
+                    'tea': '🍵', 'green tea': '🍵',
+                    'sandwich': '🥪', 'wrap': '🥪',
+                    'salad': '🥗',
+                    'fruit': '🍎', 'banana': '🍌', 'apple': '🍎',
+                    'yogurt': '🥛', 'milk': '🥛',
+                    'protein': '💪', 'bar': '💪',
+                    'granola': '🌾', 'cereal': '🌾'
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.connectWebSocket();
+                this.startUptimeCounter();
+                this.startPeriodicUpdates();
+                
+                // Set up error handling
+                window.addEventListener('error', this.handleError.bind(this));
+                window.addEventListener('unhandledrejection', this.handleError.bind(this));
+            }
+            
+            getProductEmoji(productName) {
+                const product = productName.toLowerCase();
+                for (const [key, emoji] of Object.entries(this.productEmojis)) {
+                    if (product.includes(key)) {
+                        return emoji;
+                    }
+                }
+                return '🛒'; // Default shopping cart emoji
+            }
+            
+            formatTime(timestamp, includeSeconds = false) {
+                const date = new Date(timestamp);
+                const options = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                };
+                if (includeSeconds) {
+                    options.second = '2-digit';
+                }
+                return date.toLocaleTimeString('en-US', options);
+            }
+            
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(amount);
+            }
+            
+            formatUptime(ms) {
+                const hours = Math.floor(ms / (1000 * 60 * 60));
+                const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            }
+            
+            formatRelativeTime(timestamp) {
+                const now = Date.now();
+                const diff = now - timestamp;
+                const minutes = Math.floor(diff / (1000 * 60));
+                
+                if (minutes < 1) return 'Just now';
+                if (minutes < 60) return `${minutes}m ago`;
+                
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours}h ago`;
+                
+                const days = Math.floor(hours / 24);
+                return `${days}d ago`;
+            }
+            
+            updateConnectionStatus(status, message) {
+                this.elements.status.className = `status ${status}`;
+                this.elements.status.textContent = message;
+                this.elements.connectionStatus.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            }
+            
+            updateTransactionBanner(sale) {
+                const emoji = this.getProductEmoji(sale.productName);
+                const price = sale.price ? this.formatCurrency(parseFloat(sale.price)) : 'N/A';
+                
+                this.elements.transactionText.innerHTML = `${emoji} ${sale.productName}`;
+                this.elements.lastSaleTime.textContent = this.formatTime(sale.time || Date.now(), true);
+                this.elements.lastSalePrice.textContent = price;
+                
+                // Show transaction details
+                this.elements.transactionDetails.style.display = 'flex';
+                
+                // Update banner appearance
+                this.elements.transactionBanner.classList.remove('no-sales');
+                this.elements.transactionBanner.classList.add('has-sale', 'pulse');
+                this.elements.transactionText.classList.remove('no-sales');
+                
+                // Reset banner after display time
+                setTimeout(() => {
+                    this.elements.transactionBanner.classList.add('no-sales');
+                    this.elements.transactionBanner.classList.remove('has-sale', 'pulse');
+                    this.elements.transactionText.classList.add('no-sales');
+                    this.elements.transactionText.innerHTML = 'Waiting for transactions...';
+                    this.elements.transactionDetails.style.display = 'none';
+                }, this.bannerDisplayTime);
+            }
+            
+            addTransactionToFeed(sale) {
+                // Remove "No transactions yet" placeholder
+                if (this.elements.noSales) {
+                    this.elements.noSales.remove();
+                    this.elements.noSales = null;
+                }
+                
+                const li = document.createElement('li');
+                li.className = 'feed-item new-sale';
+                
+                const emoji = this.getProductEmoji(sale.productName);
+                const time = this.formatTime(sale.time || Date.now());
+                const price = sale.price ? this.formatCurrency(parseFloat(sale.price)) : 'N/A';
+                
+                li.innerHTML = `
+                    <div class="item-content">
+                        <div class="item-emoji">${emoji}</div>
+                        <div class="item-details">
+                            <div class="item-name">${sale.productName}</div>
+                            <div class="item-time">${time}</div>
+                        </div>
+                    </div>
+                    <div class="item-price">${price}</div>
+                `;
+                
+                // Insert at the top of the feed
+                this.elements.salesList.insertBefore(li, this.elements.salesList.firstChild);
+                
+                // Keep only the latest items
+                const feedItems = this.elements.salesList.querySelectorAll('.feed-item:not(.no-sales)');
+                if (feedItems.length > this.maxFeedItems) {
+                    feedItems[feedItems.length - 1].remove();
                 }
             }
-            return '🍿'; // Default emoji
-        }
-
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: true 
-            });
-        }
-
-        function updateCelebrationBanner(sale) {
-            const emoji = getProductEmoji(sale.productName);
-            const price = sale.price ? `$${sale.price}` : '';
             
-            celebrationText.innerHTML = `${emoji} Someone just bought ${sale.productName.toUpperCase()}! ${price}`;
+            updateStatistics() {
+                // Calculate revenue
+                const revenue = this.salesData.reduce((sum, sale) => {
+                    return sum + (parseFloat(sale.price) || 0);
+                }, 0);
+                
+                // Calculate average transaction
+                const avgTransaction = this.salesData.length > 0 ? revenue / this.salesData.length : 0;
+                
+                // Update UI
+                this.elements.totalSales.textContent = this.totalSales.toString();
+                this.elements.sessionSales.textContent = this.sessionSales.toString();
+                this.elements.revenueToday.textContent = this.formatCurrency(revenue);
+                this.elements.avgTransaction.textContent = this.formatCurrency(avgTransaction);
+                this.elements.lastActivity.textContent = this.lastSaleTime ? 
+                    this.formatRelativeTime(this.lastSaleTime) : 'Never';
+                this.elements.reconnectCount.textContent = this.reconnectCount.toString();
+                this.elements.lastMessageTime.textContent = this.lastMessageTime ? 
+                    this.formatRelativeTime(this.lastMessageTime) : 'Never';
+            }
             
-            // Add celebration effects
-            celebrationBanner.classList.remove('no-sales');
-            celebrationBanner.classList.add('has-sale');
-            celebrationText.classList.remove('no-sales');
+            processSale(sale) {
+                console.log('Processing sale:', sale);
+                
+                // Update counters
+                this.totalSales++;
+                this.sessionSales++;
+                this.lastSaleTime = sale.time || Date.now();
+                this.lastMessageTime = Date.now();
+                
+                // Store sale data
+                this.salesData.push({
+                    ...sale,
+                    timestamp: this.lastSaleTime
+                });
+                
+                // Update UI
+                this.updateTransactionBanner(sale);
+                this.addTransactionToFeed(sale);
+                this.updateStatistics();
+            }
             
-            // Remove celebration effects after 5 seconds
-            setTimeout(() => {
-                celebrationBanner.classList.add('no-sales');
-                celebrationBanner.classList.remove('has-sale');
-                celebrationText.classList.add('no-sales');
-                celebrationText.innerHTML = '🤖 Waiting for next purchase...';
-            }, 5000);
-        }
-
-        function connectWebSocket() {
-            ws = new WebSocket(wsUrl);
-
-            ws.onopen = () => {
-                console.log('Connected to WebSocket!');
-                statusEl.textContent = '🟢 Connected to Vending Stream';
-                statusEl.className = 'status connected';
-            };
-
-            ws.onmessage = (event) => {
+            connectWebSocket() {
                 try {
-                    const sale = JSON.parse(event.data);
-                    console.log('New sale:', sale);
-
-                    // Remove "No sales yet" placeholder
-                    const noSales = document.getElementById('no-sales');
-                    if (noSales) noSales.remove();
-
-                    // Update celebration banner
-                    updateCelebrationBanner(sale);
-
-                    // Add to live feed
-                    const li = document.createElement('li');
-                    li.className = 'feed-item new-sale';
+                    this.updateConnectionStatus('connecting', 'Connecting to WebSocket...');
                     
-                    const emoji = getProductEmoji(sale.productName);
-                    const time = sale.time ? formatTime(sale.time) : formatTime(Date.now());
-                    const price = sale.price ? ` - $${sale.price}` : '';
+                    this.ws = new WebSocket(this.wsUrl);
                     
-                    li.innerHTML = `<span style="color: #00ffff;">${time}</span> - ${emoji} ${sale.productName}${price}`;
+                    this.ws.onopen = () => {
+                        console.log('WebSocket connected successfully');
+                        this.updateConnectionStatus('connected', 'Connected');
+                    };
                     
-                    // Insert at the top of the feed
-                    salesEl.insertBefore(li, salesEl.firstChild);
-
-                    // Keep only the latest 10 sales
-                    const feedItems = salesEl.querySelectorAll('.feed-item');
-                    if (feedItems.length > 10) {
-                        feedItems[feedItems.length - 1].remove();
-                    }
-
-                    // Store last sale for celebration banner
-                    lastSale = sale;
-
-                } catch (err) {
-                    console.error('Failed to parse message', err);
+                    this.ws.onmessage = (event) => {
+                        try {
+                            this.lastMessageTime = Date.now();
+                            const sale = JSON.parse(event.data);
+                            
+                            // Validate sale data
+                            if (!sale || !sale.productName) {
+                                console.warn('Invalid sale data received:', sale);
+                                return;
+                            }
+                            
+                            this.processSale(sale);
+                            
+                        } catch (error) {
+                            console.error('Failed to parse WebSocket message:', error);
+                            console.error('Raw message:', event.data);
+                        }
+                    };
+                    
+                    this.ws.onclose = (event) => {
+                        console.warn('WebSocket closed:', event.code, event.reason);
+                        this.updateConnectionStatus('disconnected', 'Disconnected - Reconnecting...');
+                        this.reconnectCount++;
+                        this.updateStatistics();
+                        
+                        // Attempt to reconnect
+                        setTimeout(() => {
+                            this.connectWebSocket();
+                        }, this.reconnectDelay);
+                    };
+                    
+                    this.ws.onerror = (error) => {
+                        console.error('WebSocket error:', error);
+                        this.updateConnectionStatus('connecting', 'Connection Error - Retrying...');
+                    };
+                    
+                } catch (error) {
+                    console.error('Failed to create WebSocket connection:', error);
+                    this.updateConnectionStatus('disconnected', 'Connection Failed');
+                    
+                    // Retry connection
+                    setTimeout(() => {
+                        this.connectWebSocket();
+                    }, this.reconnectDelay);
                 }
-            };
-
-            ws.onclose = (event) => {
-                console.warn('WebSocket closed, retrying in 3s', event);
-                statusEl.textContent = '🔴 Disconnected - Reconnecting...';
-                statusEl.className = 'status disconnected';
-                setTimeout(connectWebSocket, 3000);
-            };
-
-            ws.onerror = (err) => {
-                console.error('WebSocket error:', err);
-                statusEl.textContent = '🟡 Connection Error';
-                statusEl.className = 'status connecting';
-            };
-        }
-
-        // Initialize WebSocket connection
-        connectWebSocket();
-
-        // Optional: Add some demo data for testing when no real sales are coming through
-        // (Remove this in production)
-        /*
-        setTimeout(() => {
-            if (!lastSale) {
-                // Simulate a sale for demo purposes
-                const demoSale = {
-                    productName: 'Chocolate Bar',
-                    price: '2.50',
+            }
+            
+            startUptimeCounter() {
+                setInterval(() => {
+                    const uptime = Date.now() - this.startTime;
+                    this.elements.uptime.textContent = this.formatUptime(uptime);
+                }, 1000);
+            }
+            
+            startPeriodicUpdates() {
+                // Update statistics and relative times every 30 seconds
+                setInterval(() => {
+                    this.updateStatistics();
+                }, 30000);
+                
+                // Update relative times every minute
+                setInterval(() => {
+                    this.elements.lastActivity.textContent = this.lastSaleTime ? 
+                        this.formatRelativeTime(this.lastSaleTime) : 'Never';
+                    this.elements.lastMessageTime.textContent = this.lastMessageTime ? 
+                        this.formatRelativeTime(this.lastMessageTime) : 'Never';
+                }, 60000);
+            }
+            
+            handleError(event) {
+                console.error('Application error:', event);
+                // Could implement error reporting here
+            }
+            
+            // Public method to simulate a sale for testing
+            simulateSale(productName = 'Test Product', price = '1.50') {
+                const testSale = {
+                    productName,
+                    price,
                     time: Date.now()
                 };
-                ws.onmessage({ data: JSON.stringify(demoSale) });
+                this.processSale(testSale);
             }
+        }
+        
+        // Initialize the monitor
+        const monitor = new VendingMachineMonitor();
+        
+        // Make available for debugging/testing
+        window.vendingMonitor = monitor;
+        
+        // Optional: Uncomment the following lines to test with demo data
+        /*
+        setTimeout(() => {
+            monitor.simulateSale('Coca Cola', '2.00');
+        }, 2000);
+        
+        setTimeout(() => {
+            monitor.simulateSale('Chocolate Bar', '1.75');
         }, 5000);
+        
+        setTimeout(() => {
+            monitor.simulateSale('Energy Drink', '3.50');
+        }, 8000);
         */
     </script>
 </body>
