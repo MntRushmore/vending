@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Vending Stream - Live Display</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            color: white;
+        }
+        
+        /* Animated Grid Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 2px, transparent 2px);
+            background-size: 80px 80px;
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(80px, 80px); }
+        }
+        
+        /* Main Container */
+        .tv-container {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+            padding: 40px;
+            gap: 40px;
+        }
+        
+        /* Header Section */
+        .tv-header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        .tv-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 4rem;
+            color: #00ffff;
+            text-shadow: 
+                0 0 10px #00ffff,
+                0 0 20px #00ffff,
+                0 0 40px #00ffff;
+            animation: neonPulse 3s ease-in-out infinite alternate;
+            margin-bottom: 20px;
+        }
+        
+        .tv-subtitle {
+            font-size: 2rem;
+            color: #ff00ff;
+            font-weight: 400;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        
+        @keyframes neonPulse {
+            from {
+                text-shadow: 
+                    0 0 10px #00ffff,
+                    0 0 20px #00ffff,
+                    0 0 40px #00ffff;
+            }
+            to {
+                text-shadow: 
+                    0 0 5px #00ffff,
+                    0 0 15px #00ffff,
+                    0 0 25px #00ffff,
+                    0 0 40px #ff00ff;
+            }
+        }
+        
+        /* Main Display Area */
+        .tv-main {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 60px;
+            height: 100%;
+        }
+        
+        /* Live Feed Section */
+        .live-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00ffff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px #00ffff;
+            border-bottom: 3px solid #00ffff;
+            padding-bottom: 15px;
+        }
+        
+        .live-feed {
+            flex: 1;
+            background: rgba(0, 20, 40, 0.7);
+            border: 3px solid #00ffff;
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.3),
+                inset 0 0 30px rgba(0, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .feed-item {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border-left: 6px solid #00ffff;
+            border-radius: 15px;
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            animation: slideInRight 0.6s ease-out;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .feed-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.4);
+        }
+        
+        .feed-item.new-sale {
+            animation: slideInRight 0.6s ease-out, newSaleGlow 3s ease-out 0.6s;
+        }
+        
+        .feed-emoji {
+            font-size: 3rem;
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        .feed-details {
+            flex: 1;
+        }
+        
+        .feed-product {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .feed-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .feed-time {
+            color: #00ffff;
+            font-size: 1.4rem;
+            font-weight: 400;
+        }
+        
+        .feed-price {
+            color: #00ff00;
+            font-size: 2rem;
+            font-weight: 900;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .no-sales {
+            text-align: center;
+            color: #666;
+            font-size: 2rem;
+            padding: 60px 20px;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 255, 0.2));
+            border: 3px solid #ff00ff;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 20px rgba(255, 0, 255, 0.3),
+                inset 0 0 20px rgba(255, 0, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(255, 0, 255, 0.4);
+        }
+        
+        .stats-title {
+            font-size: 1.8rem;
+            color: #ff00ff;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .stats-value {
+            font-size: 3.5rem;
+            color: #ffffff;
+            font-weight: 900;
+            text-shadow: 0 0 20px #ffffff;
+            font-family: 'Press Start 2P', cursive;
+        }
+        
+        .stats-change {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #00ff00;
+            font-weight: 400;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .connection-status.connected {
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .connection-status.disconnected {
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            animation: pulse 1s infinite;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* Celebration Overlay */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+            background-size: 400% 400%;
+            animation: gradientShift 2s ease infinite;
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .celebration-overlay.show {
+            display: flex;
+        }
+        
+        .celebration-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 4rem;
+            color: #000;
+            text-shadow: 3px 3px 0px #fff;
+            text-align: center;
+            animation: bounce 1s ease-in-out infinite;
+            margin-bottom: 30px;
+        }
+        
+        .celebration-details {
+            font-size: 2.5rem;
+            color: #000;
+            text-shadow: 2px 2px 0px #fff;
+            font-weight: 700;
+        }
+        
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ff00ff;
+            animation: confettiFall 4s linear infinite;
+        }
+        
+        .confetti:nth-child(odd) { 
+            background: #00ffff; 
+            animation-delay: 0.5s;
+            left: 10%;
+        }
+        .confetti:nth-child(even) { 
+            background: #ffff00; 
+            animation-delay: 1s;
+            left: 20%;
+        }
+        
+        /* Animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes newSaleGlow {
+            0% { 
+                background: linear-gradient(135deg, rgba(255, 255, 0, 0.8), rgba(0, 255, 0, 0.8));
+                transform: scale(1.02);
+            }
+            100% { 
+                background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive for smaller TVs */
+        @media (max-height: 800px) {
+            .tv-title { font-size: 3rem; }
+            .tv-subtitle { font-size: 1.5rem; }
+            .section-title { font-size: 2rem; }
+            .feed-item { font-size: 1.5rem; }
+            .feed-product { font-size: 1.8rem; }
+            .stats-value { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="tv-container">
+        <!-- Header -->
+        <header class="tv-header">
+            <h1 class="tv-title">🎯 VENDING STREAM</h1>
+            <p class="tv-subtitle">Live Purchase Tracker</p>
+        </header>
+        
+        <!-- Connection Status -->
+        <div id="connection-status" class="connection-status disconnected">
+            <div class="status-dot"></div>
+            <span id="status-text">Connecting...</span>
+        </div>
+        
+        <!-- Main Display -->
+        <main class="tv-main">
+            <!-- Live Feed -->
+            <section class="live-section">
+                <h2 class="section-title">🚀 LIVE PURCHASES</h2>
+                <div class="live-feed">
+                    <div id="live-feed">
+                        <div class="no-sales">
+                            <div>🤖 Waiting for purchases...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Stats -->
+            <section class="stats-section">
+                <h2 class="section-title">📊 TODAY'S STATS</h2>
+                
+                <div class="stats-card">
+                    <div class="stats-title">Total Sales</div>
+                    <div class="stats-value" id="total-sales">0</div>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-title">Revenue</div>
+                    <div class="stats-value" id="total-revenue">$0</div>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-title">Latest Item</div>
+                    <div class="stats-value" id="latest-item">None</div>
+                    <div class="stats-change" id="latest-time"></div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Celebration Overlay -->
+        <div id="celebration-overlay" class="celebration-overlay">
+            <div class="celebration-text">🎉 NEW PURCHASE! 🎉</div>
+            <div class="celebration-details" id="celebration-details"></div>
+            
+            <!-- Confetti -->
+            <div class="confetti" style="left: 10%"></div>
+            <div class="confetti" style="left: 20%"></div>
+            <div class="confetti" style="left: 30%"></div>
+            <div class="confetti" style="left: 40%"></div>
+            <div class="confetti" style="left: 50%"></div>
+            <div class="confetti" style="left: 60%"></div>
+            <div class="confetti" style="left: 70%"></div>
+            <div class="confetti" style="left: 80%"></div>
+            <div class="confetti" style="left: 90%"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const WEBSOCKET_URL = 'wss://pb69dl7oeb.execute-api.us-west-1.amazonaws.com/production';
+        const CELEBRATION_DURATION = 4000;
+        const MAX_FEED_ITEMS = 8;
+        
+        // Product emoji mapping
+        const PRODUCT_EMOJIS = {
+            'energy drink': '⚡', 'soda': '🥤', 'cola': '🥤', 'pepsi': '🥤', 'coke': '🥤',
+            'chocolate': '🍫', 'candy': '🍬', 'chips': '🍿', 'cookies': '🍪', 'nuts': '🥜',
+            'water': '💧', 'juice': '🧃', 'coffee': '☕', 'sandwich': '🥪', 'fruit': '🍎'
+        };
+        
+        // Global state
+        let ws = null;
+        let salesData = [];
+        let totalSales = 0;
+        let totalRevenue = 0;
+        
+        // DOM elements
+        const connectionStatus = document.getElementById('connection-status');
+        const statusText = document.getElementById('status-text');
+        const liveFeed = document.getElementById('live-feed');
+        const celebrationOverlay = document.getElementById('celebration-overlay');
+        const celebrationDetails = document.getElementById('celebration-details');
+        const totalSalesEl = document.getElementById('total-sales');
+        const totalRevenueEl = document.getElementById('total-revenue');
+        const latestItemEl = document.getElementById('latest-item');
+        const latestTimeEl = document.getElementById('latest-time');
+        
+        // Utility Functions
+        function getProductEmoji(productName) {
+            const product = productName.toLowerCase();
+            for (const [key, emoji] of Object.entries(PRODUCT_EMOJIS)) {
+                if (product.includes(key)) return emoji;
+            }
+            return '🍿';
+        }
+        
+        function formatTime(timestamp) {
+            return new Date(timestamp).toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount || 0);
+        }
+        
+        function extractPrice(text) {
+            if (typeof text === 'number') return text;
+            if (typeof text !== 'string') return 0;
+            const match = text.match(/\$?(\d+\.?\d*)/);
+            return match ? parseFloat(match[1]) : 0;
+        }
+        
+        // WebSocket Functions
+        function connectWebSocket() {
+            try {
+                ws = new WebSocket(WEBSOCKET_URL);
+                
+                ws.onopen = () => {
+                    console.log('🟢 Connected to WebSocket');
+                    updateConnectionStatus('connected', 'Connected');
+                };
+                
+                ws.onmessage = (event) => {
+                    try {
+                        const sale = JSON.parse(event.data);
+                        console.log('📦 New sale:', sale);
+                        handleNewSale(sale);
+                    } catch (error) {
+                        console.error('❌ Error parsing sale data:', error);
+                    }
+                };
+                
+                ws.onclose = () => {
+                    console.log('🔴 WebSocket disconnected, reconnecting...');
+                    updateConnectionStatus('disconnected', 'Reconnecting...');
+                    setTimeout(connectWebSocket, 3000);
+                };
+                
+                ws.onerror = (error) => {
+                    console.error('❌ WebSocket error:', error);
+                    updateConnectionStatus('disconnected', 'Connection Error');
+                };
+                
+            } catch (error) {
+                console.error('❌ Failed to connect:', error);
+                updateConnectionStatus('disconnected', 'Failed to Connect');
+                setTimeout(connectWebSocket, 5000);
+            }
+        }
+        
+        function updateConnectionStatus(status, text) {
+            connectionStatus.className = `connection-status ${status}`;
+            statusText.textContent = text;
+        }
+        
+        // Sale Handling
+        function handleNewSale(sale) {
+            // Add to sales data
+            const saleData = {
+                ...sale,
+                timestamp: sale.timestamp || Date.now(),
+                price: extractPrice(sale.price),
+                emoji: getProductEmoji(sale.productName)
+            };
+            
+            salesData.unshift(saleData);
+            
+            // Update stats
+            updateStats();
+            
+            // Add to feed
+            addToFeed(saleData);
+            
+            // Show celebration
+            showCelebration(saleData);
+        }
+        
+        function updateStats() {
+            totalSales = salesData.length;
+            totalRevenue = salesData.reduce((sum, sale) => sum + (sale.price || 0), 0);
+            
+            // Update display
+            totalSalesEl.textContent = totalSales;
+            totalRevenueEl.textContent = formatCurrency(totalRevenue);
+            
+            if (salesData.length > 0) {
+                const latest = salesData[0];
+                latestItemEl.textContent = `${latest.emoji} ${latest.productName}`;
+                latestTimeEl.textContent = formatTime(latest.timestamp);
+            }
+        }
+        
+        function addToFeed(sale) {
+            // Remove "no sales" message
+            const noSales = liveFeed.querySelector('.no-sales');
+            if (noSales) {
+                noSales.remove();
+            }
+            
+            // Create feed item
+            const feedItem = document.createElement('div');
+            feedItem.className = 'feed-item new-sale';
+            feedItem.innerHTML = `
+                <div class="feed-emoji">${sale.emoji}</div>
+                <div class="feed-details">
+                    <div class="feed-product">${sale.productName}</div>
+                    <div class="feed-meta">
+                        <span class="feed-time">${formatTime(sale.timestamp)}</span>
+                        ${sale.price ? `<span class="feed-price">${formatCurrency(sale.price)}</span>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Add to top of feed
+            liveFeed.insertBefore(feedItem, liveFeed.firstChild);
+            
+            // Remove excess items
+            const feedItems = liveFeed.querySelectorAll('.feed-item');
+            if (feedItems.length > MAX_FEED_ITEMS) {
+                feedItems[feedItems.length - 1].remove();
+            }
+        }
+        
+        function showCelebration(sale) {
+            celebrationDetails.innerHTML = `
+                ${sale.emoji} ${sale.productName.toUpperCase()}
+                ${sale.price ? `<br>${formatCurrency(sale.price)}` : ''}
+            `;
+            
+            celebrationOverlay.classList.add('show');
+            
+            setTimeout(() => {
+                celebrationOverlay.classList.remove('show');
+            }, CELEBRATION_DURATION);
+        }
+        
+        // Demo Mode (for testing when no WebSocket available)
+        function startDemoMode() {
+            console.log('🎮 Starting demo mode...');
+            
+            const demoProducts = [
+                { name: 'Chocolate Bar', price: 2.50 },
+                { name: 'Energy Drink', price: 3.00 },
+                { name: 'Chips', price: 1.75 },
+                { name: 'Soda', price: 2.25 },
+                { name: 'Cookies', price: 2.00 },
+                { name: 'Candy', price: 1.50 }
+            ];
+            
+            setInterval(() => {
+                if (Math.random() < 0.3) { // 30% chance every 5 seconds
+                    const product = demoProducts[Math.floor(Math.random() * demoProducts.length)];
+                    handleNewSale({
+                        productName: product.name,
+                        price: product.price,
+                        timestamp: Date.now()
+                    });
+                }
+            }, 5000);
+        }
+        
+        // Initialize
+        function init() {
+            console.log('🎯 Initializing Vending Stream TV Display...');
+            
+            // Connect to WebSocket
+            connectWebSocket();
+            
+            // Start demo mode after 10 seconds if no real data
+            setTimeout(() => {
+                if (salesData.length === 0) {
+                    startDemoMode();
+                }
+            }, 10000);
+            
+            console.log('✅ TV Display ready!');
+        }
+        
+        // Auto-refresh every hour to prevent memory leaks
+        setInterval(() => {
+            if (salesData.length > 100) {
+                salesData = salesData.slice(0, 50); // Keep only recent 50 sales
+                console.log('🧹 Cleaned up old sales data');
+            }
+        }, 60 * 60 * 1000); // Every hour
+        
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
