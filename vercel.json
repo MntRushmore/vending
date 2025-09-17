@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "vending-stream-analytics",
   "buildCommand": "echo 'Static files ready'",
   "outputDirectory": ".",
   "installCommand": "npm install",
@@ -40,7 +39,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "source": "/.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)",
       "headers": [
         {
           "key": "Cache-Control",
