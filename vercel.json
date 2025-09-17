@@ -1,26 +1,15 @@
 {
   "version": 2,
   "name": "vending-stream-analytics",
-  "public": true,
-  "outputDirectory": ".",
   "buildCommand": "echo 'Static files ready'",
-  "devCommand": "node server.js",
+  "outputDirectory": ".",
   "installCommand": "npm install",
+  "devCommand": "node server.js",
   "framework": null,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/health",
-      "dest": "/api/health.js"
-    },
-    {
-      "src": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/((?!api|assets|components|utils|_next|favicon.ico).*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -49,9 +38,20 @@
           "value": "no-cache, no-store, must-revalidate"
         }
       ]
+    },
+    {
+      "source": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ],
-  "env": {
-    "NODE_ENV": "production"
+  "functions": {
+    "api/health.js": {
+      "runtime": "nodejs18.x"
+    }
   }
 }
