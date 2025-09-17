@@ -23,7 +23,7 @@
     "health": "curl -f http://localhost:3000/health || exit 1",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "echo \"No linting configured\"",
-    "build": "echo \"No build process needed - static files\"",
+    "build": "echo 'Static files ready for deployment'",
     "deploy": "pm2 deploy ecosystem.config.js production",
     "backup": "tar -czf backup-$(date +%Y%m%d-%H%M%S).tar.gz --exclude=node_modules --exclude=logs --exclude=*.tar.gz .",
     "logs:error": "tail -f logs/error.log",
