@@ -1,0 +1,626 @@
+/* ==========================================================================
+   Advanced Animations & Effects
+   ========================================================================== */
+
+/* ==========================================================================
+   Confetti Animation System
+   ========================================================================== */
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  animation: confettiFall 3s linear infinite;
+  pointer-events: none;
+}
+
+.confetti:nth-child(1) { 
+  left: 10%; 
+  animation-delay: 0s; 
+  background: #ff00ff;
+  transform: rotate(15deg);
+}
+.confetti:nth-child(2) { 
+  left: 20%; 
+  animation-delay: 0.5s; 
+  background: #00ffff;
+  transform: rotate(45deg);
+}
+.confetti:nth-child(3) { 
+  left: 30%; 
+  animation-delay: 1s; 
+  background: #ffff00;
+  transform: rotate(75deg);
+}
+.confetti:nth-child(4) { 
+  left: 40%; 
+  animation-delay: 1.5s; 
+  background: #ff0080;
+  transform: rotate(105deg);
+}
+.confetti:nth-child(5) { 
+  left: 50%; 
+  animation-delay: 2s; 
+  background: #00ff80;
+  transform: rotate(135deg);
+}
+.confetti:nth-child(6) { 
+  left: 60%; 
+  animation-delay: 0.3s; 
+  background: #8000ff;
+  transform: rotate(165deg);
+}
+.confetti:nth-child(7) { 
+  left: 70%; 
+  animation-delay: 0.8s; 
+  background: #ff8000;
+  transform: rotate(195deg);
+}
+.confetti:nth-child(8) { 
+  left: 80%; 
+  animation-delay: 1.3s; 
+  background: #0080ff;
+  transform: rotate(225deg);
+}
+.confetti:nth-child(9) { 
+  left: 90%; 
+  animation-delay: 1.8s; 
+  background: #80ff00;
+  transform: rotate(255deg);
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-100px) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Enhanced confetti variations */
+.confetti-star {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 7px solid;
+  position: relative;
+}
+
+.confetti-star:before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 3px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid;
+}
+
+.confetti-circle {
+  border-radius: 50%;
+}
+
+.confetti-square {
+  border-radius: 2px;
+}
+
+/* ==========================================================================
+   Purchase Success Animations
+   ========================================================================== */
+
+.purchase-success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 255, 136, 0.1);
+  z-index: 1500;
+  pointer-events: none;
+  animation: successFlash 1s ease-out;
+}
+
+@keyframes successFlash {
+  0% {
+    opacity: 0;
+    background: rgba(0, 255, 136, 0);
+  }
+  20% {
+    opacity: 1;
+    background: rgba(0, 255, 136, 0.2);
+  }
+  100% {
+    opacity: 0;
+    background: rgba(0, 255, 136, 0);
+  }
+}
+
+/* ==========================================================================
+   Loading & State Animations
+   ========================================================================== */
+
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loading-dots::after {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: loadingDots 1.5s infinite;
+}
+
+.loading-dots::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: loadingDots 1.5s infinite 0.1s;
+}
+
+@keyframes loadingDots {
+  0%, 80%, 100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 25%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0.1) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ==========================================================================
+   Hover & Interactive Animations
+   ========================================================================== */
+
+.hover-glow {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hover-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.hover-glow:hover::before {
+  left: 100%;
+}
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+}
+
+.hover-shake {
+  transition: transform 0.3s ease;
+}
+
+.hover-shake:hover {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+/* ==========================================================================
+   Data Visualization Animations
+   ========================================================================== */
+
+.chart-animate-in {
+  animation: chartSlideUp 0.8s ease-out;
+}
+
+@keyframes chartSlideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.stat-counter {
+  animation: countUp 2s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Number rolling animation */
+.roll-number {
+  display: inline-block;
+  animation: rollIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes rollIn {
+  0% {
+    transform: rotateX(90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Status & Alert Animations
+   ========================================================================== */
+
+.connection-pulse {
+  animation: connectionPulse 2s ease-in-out infinite;
+}
+
+@keyframes connectionPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.alert-slide-down {
+  animation: alertSlideDown 0.5s ease-out;
+}
+
+@keyframes alertSlideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.error-shake {
+  animation: errorShake 0.6s ease-in-out;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* ==========================================================================
+   Button & UI Element Animations
+   ========================================================================== */
+
+.button-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.button-ripple:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+.rotate-icon {
+  transition: transform 0.3s ease;
+}
+
+.rotate-icon:hover {
+  transform: rotate(180deg);
+}
+
+.scale-on-hover {
+  transition: transform 0.3s ease;
+}
+
+.scale-on-hover:hover {
+  transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Text & Typography Animations
+   ========================================================================== */
+
+.typewriter {
+  overflow: hidden;
+  border-right: 2px solid var(--accent-primary);
+  animation: typing 2s steps(40), blink 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--accent-primary); }
+}
+
+.text-glow-cycle {
+  animation: textGlowCycle 3s ease-in-out infinite alternate;
+}
+
+@keyframes textGlowCycle {
+  0% {
+    text-shadow: 0 0 10px var(--neon-cyan);
+  }
+  33% {
+    text-shadow: 0 0 15px var(--neon-pink);
+  }
+  66% {
+    text-shadow: 0 0 20px var(--neon-yellow);
+  }
+  100% {
+    text-shadow: 0 0 25px var(--neon-green);
+  }
+}
+
+/* ==========================================================================
+   Particle Effects
+   ========================================================================== */
+
+.particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  animation: particleFloat 6s linear infinite;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.particle:nth-child(odd) {
+  animation-duration: 8s;
+  animation-delay: -2s;
+}
+
+.particle:nth-child(even) {
+  animation-duration: 10s;
+  animation-delay: -4s;
+}
+
+/* ==========================================================================
+   Page Transitions
+   ========================================================================== */
+
+.page-transition-enter {
+  animation: pageEnter 0.5s ease-out;
+}
+
+.page-transition-exit {
+  animation: pageExit 0.3s ease-in;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* ==========================================================================
+   Performance Optimizations
+   ========================================================================== */
+
+/* Reduce animations on mobile for better performance */
+@media (max-width: 768px) {
+  .confetti {
+    animation-duration: 2s;
+  }
+  
+  .particles-container {
+    display: none;
+  }
+  
+  .hover-glow::before {
+    display: none;
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .confetti,
+  .particles-container {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   Dark/Light Theme Transitions
+   ========================================================================== */
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="light"] .connection-pulse {
+  animation-duration: 3s;
+}
+
+/* ==========================================================================
+   Custom Animation Classes for JavaScript
+   ========================================================================== */
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
