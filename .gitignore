@@ -1,13 +1,20 @@
 # Vercel
 .vercel
 
+# Dependencies (only needed for local development)
+node_modules/
+package.json
+package-lock.json
+
 # Logs
 logs/
 *.log
 
-# Supervisor files
+# Supervisor files (local development only)
 supervisord.pid
 supervisor.sock
+server.py
+supervisord.conf
 
 # OS generated files
 .DS_Store
